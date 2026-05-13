@@ -140,7 +140,7 @@ html[lang="ar"] .divider{background:linear-gradient(270deg,var(--accent2),transp
   content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,92,246,0.07) 0%, transparent 70%);
   opacity:0;transition:opacity 0.3s;
-  pointer-events:none; /* ✅ This fixes the link clicking issue */
+  pointer-events:none; 
 }
 .project-card:hover{border-color:rgba(139,92,246,0.25);transform:translateY(-3px)}
 .project-card:hover::before{opacity:1}
@@ -418,16 +418,46 @@ html[lang="ar"] .ar-b{display:block!important}
 </footer>
 
 <script>
-function setLang(l){
-  document.documentElement.lang=l;
-  document.documentElement.dir=l==='ar'?'rtl':'ltr';
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+// Logic to handle language switching and state saving
+function setLang(l) {
+  document.documentElement.lang = l;
+  document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  
+  // Save preference to local storage
+  localStorage.setItem('yasser-pref-lang', l);
+
+  // Update button active states
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.remove('active');
+    const text = b.textContent.trim().toLowerCase();
+    if(text === l || (l === 'ar' && text === 'عربي')) {
+      b.classList.add('active');
+    }
+  });
 }
-const obs=new IntersectionObserver((entries)=>{
-  entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('visible'),i*80)});
-},{threshold:0.08});
-document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// Initialization on Page Load
+window.addEventListener('load', () => {
+  // 1. Restore Language Preference
+  const savedLang = localStorage.getItem('yasser-pref-lang') || 'ar';
+  setLang(savedLang);
+
+  // 2. Allow browser to handle scroll restoration naturally
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'auto';
+  }
+});
+
+// Animation Observer
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
