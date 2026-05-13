@@ -139,7 +139,8 @@ html[lang="ar"] .divider{background:linear-gradient(270deg,var(--accent2),transp
 .project-card::before{
   content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,92,246,0.07) 0%, transparent 70%);
-  opacity:0;transition:opacity 0.3s
+  opacity:0;transition:opacity 0.3s;
+  pointer-events:none; /* ✅ This fixes the link clicking issue */
 }
 .project-card:hover{border-color:rgba(139,92,246,0.25);transform:translateY(-3px)}
 .project-card:hover::before{opacity:1}
@@ -293,7 +294,9 @@ html[lang="ar"] .ar-b{display:block!important}
         <p class="en-b">Predicted weekly sales across 45 stores and 99 departments using XGBoost with custom WMAE metric. R² = 0.943</p>
         <p class="ar-b">تنبؤ بالمبيعات الأسبوعية لـ 45 متجراً و99 قسماً باستخدام XGBoost مع مقياس WMAE مخصص. R² = 0.943</p>
         <div class="tags"><span class="tag v">XGBoost</span><span class="tag o">Time Series</span><span class="tag b">WMAE</span></div>
-        <a href="https://www.kaggle.com/code/binaliy/walmart-recruiting-store-sales-forecasting1" class="p-link"><span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span></a>
+        <a href="https://www.kaggle.com/code/binaliy/walmart-recruiting-store-sales-forecasting1" class="p-link" target="_blank" rel="noopener noreferrer">
+          <span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span>
+        </a>
       </div>
 
       <div class="project-card fade-up">
@@ -302,7 +305,9 @@ html[lang="ar"] .ar-b{display:block!important}
         <p class="en-b">Monthly forecasting using Facebook Prophet with multiplicative seasonality and manual grid search tuning. R² = 0.936</p>
         <p class="ar-b">تنبؤ شهري باستخدام Prophet مع الموسمية التضاعفية وضبط المعاملات يدوياً. R² = 0.936</p>
         <div class="tags"><span class="tag v">Prophet</span><span class="tag o">Forecasting</span><span class="tag g">Cross-Val</span></div>
-        <a href="#" class="p-link"><span class="en">GitHub ↗</span><span class="ar">↗ جيت هاب</span></a>
+        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
+          <span class="en">GitHub ↗</span><span class="ar">↗ جيت هاب</span>
+        </a>
       </div>
 
       <div class="project-card fade-up">
@@ -311,7 +316,9 @@ html[lang="ar"] .ar-b{display:block!important}
         <p class="en-b">End-to-end regression pipeline with XGBoost, feature engineering and hyperparameter tuning via GridSearchCV.</p>
         <p class="ar-b">نظام تنبؤ متكامل بأسعار المنازل باستخدام XGBoost وهندسة الميزات.</p>
         <div class="tags"><span class="tag v">XGBoost</span><span class="tag b">Regression</span><span class="tag g">GridSearchCV</span></div>
-        <a href="#" class="p-link"><span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span></a>
+        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
+          <span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span>
+        </a>
       </div>
 
       <div class="project-card fade-up">
@@ -320,7 +327,9 @@ html[lang="ar"] .ar-b{display:block!important}
         <p class="en-b">Imbalanced classification with 99.8% non-fraud data using SMOTE, class weights and ROC-AUC optimization.</p>
         <p class="ar-b">تصنيف البيانات غير المتوازنة بنسبة احتيال 0.2% باستخدام SMOTE وأوزان الفئات.</p>
         <div class="tags"><span class="tag v">Random Forest</span><span class="tag o">SMOTE</span><span class="tag b">ROC-AUC</span></div>
-        <a href="#" class="p-link"><span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span></a>
+        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
+          <span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span>
+        </a>
       </div>
 
       <div class="project-card fade-up">
@@ -329,7 +338,9 @@ html[lang="ar"] .ar-b{display:block!important}
         <p class="en-b">Solo project using Logistic Regression and Random Forest with thorough EDA and feature engineering.</p>
         <p class="ar-b">مشروع مستقل باستخدام Logistic Regression وRandom Forest مع تحليل استكشافي شامل.</p>
         <div class="tags"><span class="tag v">Logistic Reg</span><span class="tag g">Classification</span><span class="tag o">EDA</span></div>
-        <a href="#" class="p-link"><span class="en">GitHub ↗</span><span class="ar">↗ جيت هاب</span></a>
+        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
+          <span class="en">GitHub ↗</span><span class="ar">↗ جيت هاب</span>
+        </a>
       </div>
 
       <div class="project-card fade-up">
@@ -338,7 +349,9 @@ html[lang="ar"] .ar-b{display:block!important}
         <p class="en-b">Interactive customer segmentation dashboard built with Streamlit analyzing Recency, Frequency and Monetary value.</p>
         <p class="ar-b">لوحة تفاعلية لتقسيم العملاء بـ Streamlit تحلل مؤشرات الشراء والتكرار والقيمة المالية.</p>
         <div class="tags"><span class="tag v">Streamlit</span><span class="tag o">RFM</span><span class="tag b">Plotly</span></div>
-        <a href="#" class="p-link"><span class="en">Live Demo ↗</span><span class="ar">↗ تجربة مباشرة</span></a>
+        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
+          <span class="en">Live Demo ↗</span><span class="ar">↗ تجربة مباشرة</span>
+        </a>
       </div>
 
     </div>
@@ -392,9 +405,9 @@ html[lang="ar"] .ar-b{display:block!important}
       <p class="ar-b">أبحث عن فرصة تدريب في مجال علم البيانات. إذا كان لديك فرصة مناسبة، يسعدني التواصل معك!</p>
       <div class="c-links">
         <a href="mailto:contact.yasser.alali@gmail.com" class="c-link">📧 <span class="en">Email</span><span class="ar">البريد الإلكتروني</span></a>
-        <a href="https://github.com/ContactYasser?tab=repositories" class="c-link" target="_blank">💻 GitHub</a>
-        <a href="https://www.kaggle.com/binaliy/code" class="c-link" target="_blank">🏆 Kaggle</a>
-        <a href="https://www.linkedin.com/in/yasser-alali/" class="c-link" target="_blank">💼 LinkedIn</a>
+        <a href="https://github.com/ContactYasser?tab=repositories" class="c-link" target="_blank" rel="noopener noreferrer">💻 GitHub</a>
+        <a href="https://www.kaggle.com/binaliy/code" class="c-link" target="_blank" rel="noopener noreferrer">🏆 Kaggle</a>
+        <a href="https://www.linkedin.com/in/yasser-alali/" class="c-link" target="_blank" rel="noopener noreferrer">💼 LinkedIn</a>
       </div>
     </div>
   </div>
