@@ -212,11 +212,41 @@ html[lang="ar"] .ar{display:revert}
 .en-b,.ar-b{display:none!important}
 html[lang="en"] .en-b{display:block!important}
 html[lang="ar"] .ar-b{display:block!important}
+
+/* ——— Admin Panel Styling */
+#admin-panel {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(13, 13, 40, 0.9);
+  border: 1px solid var(--accent);
+  padding: 15px;
+  border-radius: 12px;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  font-family: var(--bf);
+  text-align: center;
+  max-width: 250px;
+}
+#admin-panel h4 { margin-bottom: 5px; color: var(--accent2); font-size: 0.9rem; }
+#admin-panel .count { font-size: 1.5rem; font-weight: 700; }
+#admin-panel .error-msg { font-size: 0.7rem; color: #ff5555; margin-top: 10px; line-height: 1.2; }
 </style>
 </head>
 <body>
 
 <div class="bg-layer"></div>
+
+<!-- Admin Panel -->
+<div id="admin-panel">
+  <h4>Unique Visitors</h4>
+  <div class="count" id="visitor-count">Loading...</div>
+  <div id="admin-error" class="error-msg"></div>
+</div>
 
 <!-- Nav -->
 <nav>
@@ -417,16 +447,108 @@ html[lang="ar"] .ar-b{display:block!important}
   <p><span class="en">Built by Yasser · Data Scientist</span><span class="ar">من تصميم ياسر · عالم بيانات</span></p>
 </footer>
 
+<!-- Firebase SDK Modules -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+  // Use environmental config if available, otherwise fallback to your manual config
+  const isCanvas = typeof __firebase_config !== 'undefined';
+  const firebaseConfig = isCanvas 
+    ? JSON.parse(__firebase_config) 
+    : {
+        apiKey: "AIzaSyDag0IOYzkjVBzq1cJ8_PKrYRhTG-M6KKs",
+        authDomain: "yasser-portfolio-a39c5.firebaseapp.com",
+        projectId: "yasser-portfolio-a39c5",
+        storageBucket: "yasser-portfolio-a39c5.firebasestorage.app",
+        messagingSenderId: "111625887064",
+        appId: "1:111625887064:web:268dde1075e3739a08192d"
+      };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const appId = typeof __app_id !== 'undefined' ? __app_id : "yasser-portfolio-a39c5";
+
+  const errorEl = document.getElementById('admin-error');
+  const countEl = document.getElementById('visitor-count');
+
+  // Crucial: Use custom token if available (Fixes Permissions Error)
+  const initAuth = async () => {
+    try {
+      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await signInWithCustomToken(auth, __initial_auth_token);
+      } else {
+        await signInAnonymously(auth);
+      }
+    } catch (err) {
+      console.error("Auth Failed:", err);
+      errorEl.textContent = "Auth Error: " + err.message;
+    }
+  };
+
+  const setupTracking = () => {
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      
+      const storageKey = 'yasser_unique_visitor_id';
+      let visitorId = localStorage.getItem(storageKey);
+
+      if (!visitorId) {
+        visitorId = crypto.randomUUID();
+        
+        try {
+          if (isCanvas) {
+            // Environment required path
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'visitors', visitorId), {
+              at: serverTimestamp(),
+              ua: navigator.userAgent
+            });
+          } else {
+            // User's custom Firebase rule path for Github Pages
+            await setDoc(doc(db, 'analytics', visitorId), {
+              at: serverTimestamp(),
+              ua: navigator.userAgent
+            });
+          }
+          localStorage.setItem(storageKey, visitorId);
+        } catch (err) {
+          console.error("Visit Log Failed:", err);
+          errorEl.textContent = "Log Failed: " + err.message;
+        }
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === 'show') {
+        document.getElementById('admin-panel').style.display = 'block';
+        try {
+          let snapshot;
+          if (isCanvas) {
+            snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'visitors'));
+          } else {
+            snapshot = await getDocs(collection(db, 'analytics'));
+          }
+          countEl.textContent = snapshot.size;
+        } catch (err) {
+          countEl.textContent = "Error";
+          errorEl.innerHTML = "Read Error: " + err.message + "<br><br>If on Github Pages, update rules to <code>allow read: if true;</code> for /analytics";
+          console.error("Load Failed:", err);
+        }
+      }
+    });
+  };
+
+  initAuth().then(setupTracking);
+</script>
+
 <script>
 // Logic to handle language switching and state saving
 function setLang(l) {
   document.documentElement.lang = l;
   document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
-  
-  // Save preference to local storage
   localStorage.setItem('yasser-pref-lang', l);
 
-  // Update button active states
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.remove('active');
     const text = b.textContent.trim().toLowerCase();
@@ -436,19 +558,15 @@ function setLang(l) {
   });
 }
 
-// Initialization on Page Load
 window.addEventListener('load', () => {
-  // 1. Restore Language Preference
   const savedLang = localStorage.getItem('yasser-pref-lang') || 'ar';
   setLang(savedLang);
 
-  // 2. Allow browser to handle scroll restoration naturally
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'auto';
   }
 });
 
-// Animation Observer
 const obs = new IntersectionObserver((entries) => {
   entries.forEach((e, i) => {
     if (e.isIntersecting) {
