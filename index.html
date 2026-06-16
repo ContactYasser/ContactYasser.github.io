@@ -1,463 +1,1177 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ياسر — عالم بيانات</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#07071a;
-  --text:#eeeeff;
-  --muted:#8888bb;
-  --accent:#7c3aed;
-  --accent2:#9d5cf6;
-  --orange:#f97316;
-  --card:rgba(255,255,255,0.05);
-  --border:rgba(255,255,255,0.09);
-  --hf:'Cairo',sans-serif;
-  --bf:'DM Sans',sans-serif;
-}
-html[lang="ar"]{--bf:'Cairo',sans-serif}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--bf);overflow-x:hidden;line-height:1.7}
-
-/* ——— Atmospheric Background */
-.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none}
-.bg-layer::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 70% 60% at 15% 30%, rgba(88,28,220,0.35) 0%, transparent 65%),
-             radial-gradient(ellipse 60% 55% at 88% 75%, rgba(234,88,12,0.28) 0%, transparent 60%),
-             radial-gradient(ellipse 50% 50% at 55% 20%, rgba(59,14,140,0.15) 0%, transparent 55%);
-  animation:shift 16s ease-in-out infinite alternate
-}
-@keyframes shift{
-  0%{opacity:1;transform:scale(1)}
-  100%{opacity:0.85;transform:scale(1.04)}
-}
-.bg-layer::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 40% at 50% 100%, rgba(88,28,220,0.08) 0%, transparent 70%);
-}
-
-/* ——— Nav */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  padding:1.1rem 2.5rem;
-  display:flex;align-items:center;justify-content:space-between;
-  backdrop-filter:blur(20px);
-  background:rgba(7,7,26,0.55);
-  border-bottom:1px solid rgba(255,255,255,0.06)
-}
-.logo{font-family:var(--hf);font-weight:900;font-size:1rem;color:rgba(255,255,255,0.9);letter-spacing:0}
-.nav-links{display:flex;gap:1.75rem;list-style:none;position:absolute;left:50%;transform:translateX(-50%)}
-html[lang="ar"] .nav-links{left:auto;right:50%;transform:translateX(50%)}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;transition:color 0.2s}
-.nav-links a:hover{color:var(--text)}
-.nav-right{display:flex;align-items:center;gap:0.75rem}
-.lang-switch{display:flex;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:100px;overflow:hidden}
-.lang-btn{padding:0.28rem 0.8rem;font-size:0.78rem;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:var(--bf);transition:all 0.2s;letter-spacing:0.02em}
-.lang-btn.active{background:var(--accent2);color:#fff}
-
-/* ——— Hero */
-#home{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
-  text-align:center;position:relative;z-index:1;padding:6rem 2rem 3rem
-}
-.hero-inner{max-width:680px;margin:0 auto}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:0.45rem;
-  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
-  color:rgba(255,255,255,0.7);padding:0.38rem 1rem;border-radius:100px;
-  font-size:0.82rem;font-weight:500;margin-bottom:1.75rem
-}
-.dot{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
-h1{font-family:var(--hf);font-size:clamp(2.4rem,5.5vw,3.8rem);font-weight:900;line-height:1.2;margin-bottom:1.25rem;letter-spacing:-0.01em;color:#fff}
-.wave{display:inline-block;animation:wave 2.5s ease-in-out infinite;transform-origin:70% 70%}
-@keyframes wave{0%,100%{transform:rotate(0deg)}20%{transform:rotate(-10deg)}40%{transform:rotate(14deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(10deg)}}
-.hero-sub{color:rgba(200,200,230,0.65);font-size:clamp(0.9rem,1.7vw,1.05rem);max-width:500px;margin:0 auto 2.25rem;font-weight:300}
-.hero-btns{display:flex;gap:0.85rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
-.btn-primary{
-  background:linear-gradient(135deg,#6d28d9,#8b5cf6);
-  color:#fff;padding:0.75rem 1.75rem;border-radius:100px;
-  text-decoration:none;font-weight:600;font-size:0.9rem;
-  transition:all 0.25s;font-family:var(--bf);
-  box-shadow:0 0 24px rgba(139,92,246,0.35)
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 32px rgba(139,92,246,0.5)}
-.btn-ghost{
-  color:rgba(255,255,255,0.7);padding:0.75rem 1.75rem;border-radius:100px;
-  text-decoration:none;font-weight:500;font-size:0.9rem;
-  transition:all 0.25s;font-family:var(--bf);
-  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1)
-}
-.btn-ghost:hover{background:rgba(255,255,255,0.08);color:#fff}
-
-/* ——— Tool Icons Row */
-.tools-row{display:flex;gap:0.65rem;justify-content:center;flex-wrap:wrap;align-items:center}
-.tool-icon{
-  width:44px;height:44px;border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;cursor:default;transition:transform 0.2s;
-  border:1px solid rgba(255,255,255,0.06)
-}
-.tool-icon:hover{transform:translateY(-3px)}
-.ti-py{background:rgba(59,130,246,0.2)}
-.ti-pd{background:rgba(124,58,237,0.2)}
-.ti-xg{background:rgba(249,115,22,0.18)}
-.ti-pr{background:rgba(239,68,68,0.18)}
-.ti-sk{background:rgba(20,184,166,0.18)}
-.ti-pl{background:rgba(99,102,241,0.2)}
-.ti-st{background:rgba(234,179,8,0.18)}
-.ti-sq{background:rgba(16,185,129,0.18)}
-
-/* ——— Scroll hint */
-.scroll-hint{margin-top:3rem;display:flex;flex-direction:column;align-items:center;gap:0.4rem;color:var(--muted);font-size:0.75rem;animation:bob 2s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
-
-/* ——— Sections */
-section{position:relative;z-index:1;padding:6rem 2rem}
-.container{max-width:1050px;margin:0 auto}
-.sec-label{font-size:0.72rem;font-weight:700;color:var(--accent2);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:0.6rem}
-.sec-title{font-family:var(--hf);font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:900;letter-spacing:-0.01em;margin-bottom:0.65rem;color:#fff}
-.sec-sub{color:var(--muted);font-size:0.92rem;max-width:460px;font-weight:300}
-html[lang="ar"] .sec-sub{max-width:100%}
-.divider{width:40px;height:2px;background:linear-gradient(90deg,var(--accent2),transparent);margin:2.25rem 0}
-html[lang="ar"] .divider{background:linear-gradient(270deg,var(--accent2),transparent)}
-
-/* ——— Project Cards */
-.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.1rem;margin-top:2.75rem}
-.project-card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:20px;padding:1.4rem;
-  transition:all 0.3s;position:relative;overflow:hidden
-}
-.project-card::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,92,246,0.07) 0%, transparent 70%);
-  opacity:0;transition:opacity 0.3s;
-  pointer-events:none; 
-}
-.project-card:hover{border-color:rgba(139,92,246,0.25);transform:translateY(-3px)}
-.project-card:hover::before{opacity:1}
-.p-icon{font-size:1.4rem;margin-bottom:0.9rem;display:block}
-.project-card h3{font-family:var(--hf);font-size:0.97rem;font-weight:700;margin-bottom:0.45rem;color:#fff}
-.project-card p{color:var(--muted);font-size:0.83rem;line-height:1.65;margin-bottom:1.1rem;font-weight:300}
-.tags{display:flex;gap:0.35rem;flex-wrap:wrap}
-.tag{padding:0.18rem 0.55rem;border-radius:6px;font-size:0.7rem;font-weight:600}
-.tag.v{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.22);color:#a78bfa}
-.tag.o{background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);color:#fb923c}
-.tag.b{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);color:#60a5fa}
-.tag.g{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ade80}
-.p-link{display:inline-flex;align-items:center;gap:0.3rem;color:var(--muted);font-size:0.78rem;text-decoration:none;margin-top:0.9rem;transition:color 0.2s}
-.p-link:hover{color:#a78bfa}
-
-/* ——— Skills */
-.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.1rem;margin-top:2.75rem}
-.skill-group{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:1.4rem}
-.sg-title{font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1.1rem}
-.sk{display:flex;align-items:center;margin-bottom:0.75rem}
-.sk-name{font-size:0.85rem;font-weight:500;min-width:110px}
-html[lang="ar"] .sk-name{min-width:130px;text-align:right}
-.sk-bar{flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:100px;margin:0 0.65rem;overflow:hidden}
-.sk-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#6d28d9,#8b5cf6)}
-.sk-fill.o{background:linear-gradient(90deg,#c2410c,#f97316)}
-.sk-fill.b{background:linear-gradient(90deg,#1d4ed8,#60a5fa)}
-.sk-pct{font-size:0.72rem;color:var(--muted);min-width:26px;text-align:right}
-html[lang="ar"] .sk-pct{text-align:left}
-
-/* ——— Contact */
-#contact{text-align:center}
-.contact-wrap{
-  background:rgba(109,40,217,0.06);
-  border:1px solid rgba(109,40,217,0.2);
-  border-radius:26px;padding:3.5rem 2.5rem;
-  max-width:620px;margin:2.75rem auto 0;
-  position:relative;overflow:hidden
-}
-.contact-wrap::before{
-  content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);
-  width:300px;height:300px;background:radial-gradient(circle,rgba(139,92,246,0.12),transparent 70%);
-  pointer-events:none
-}
-.contact-wrap h3{font-family:var(--hf);font-size:1.75rem;font-weight:900;margin-bottom:0.85rem;color:#fff}
-.contact-wrap p{color:var(--muted);margin-bottom:2rem;font-size:0.9rem;font-weight:300;max-width:440px;margin-left:auto;margin-right:auto}
-.c-links{display:flex;gap:0.65rem;justify-content:center;flex-wrap:wrap}
-.c-link{
-  display:flex;align-items:center;gap:0.45rem;
-  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);
-  padding:0.6rem 1.3rem;border-radius:100px;text-decoration:none;
-  color:rgba(255,255,255,0.75);font-size:0.85rem;font-weight:500;
-  transition:all 0.2s;font-family:var(--bf)
-}
-.c-link:hover{border-color:rgba(139,92,246,0.4);background:rgba(109,40,217,0.1);color:#fff}
-
-footer{text-align:center;padding:1.75rem;color:rgba(255,255,255,0.2);font-size:0.75rem;position:relative;z-index:1;border-top:1px solid rgba(255,255,255,0.05)}
-
-/* ——— RTL nav fix */
-html[lang="ar"] nav{flex-direction:row-reverse}
-
-/* ——— Fade */
-.fade-up{opacity:0;transform:translateY(22px);transition:opacity 0.5s,transform 0.5s}
-.fade-up.visible{opacity:1;transform:translateY(0)}
-
-/* ——— Lang visibility */
-.en,.ar{display:none}
-html[lang="en"] .en{display:revert}
-html[lang="ar"] .ar{display:revert}
-.en-b,.ar-b{display:none!important}
-html[lang="en"] .en-b{display:block!important}
-html[lang="ar"] .ar-b{display:block!important}
-</style>
-</head>
-<body>
-
-<div class="bg-layer"></div>
-
-<!-- Nav -->
-<nav>
-  <div class="logo"><span class="en">Yasser</span><span class="ar">ياسر</span></div>
-  <ul class="nav-links">
-    <li><a href="#home"><span class="en">Home</span><span class="ar">من أنا</span></a></li>
-    <li><a href="#projects"><span class="en">Projects</span><span class="ar">مشاريعي</span></a></li>
-    <li><a href="#skills"><span class="en">Skills</span><span class="ar">الخبرة</span></a></li>
-    <li><a href="#contact"><span class="en">Contact</span><span class="ar">تواصل معي</span></a></li>
-  </ul>
-  <div class="nav-right">
-    <div class="lang-switch">
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
-      <button class="lang-btn active" onclick="setLang('ar')">عربي</button>
-    </div>
-  </div>
-</nav>
-
-<!-- Hero -->
-<section id="home">
-  <div class="hero-inner">
-    <div class="hero-badge"><div class="dot"></div><span class="en">Available to work</span><span class="ar">متاح للعمل</span></div>
-
-    <h1 class="en-b"><span class="wave">👋</span> Hi, I'm <span style="background:linear-gradient(135deg,#a78bfa,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Yasser</span><br>Data Scientist</h1>
-    <h1 class="ar-b"><span class="wave">👋</span> أهلاً، أنا <span style="background:linear-gradient(135deg,#a78bfa,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent">ياسر</span><br>عالم بيانات</h1>
-
-    <p class="hero-sub en-b">I turn raw data into meaningful insights — passionate about machine learning, time series forecasting, and building end-to-end data solutions.</p>
-    <p class="hero-sub ar-b">أحوّل البيانات الخام إلى رؤى قيّمة وقرارات ذكية — شغوف بالتعلم الآلي والتنبؤ بالسلاسل الزمنية.</p>
-
-<div class="hero-btns">
-  <a href="Yasser COOP.pdf" class="btn-primary" download="Yasser COOP.pdf">
-    <span class="en">Download CV</span>
-    <span class="ar">تحميل السيرة الذاتية</span>
-  </a>
-  <a href="#contact" class="btn-ghost">
-    <span class="en">Contact Me</span>
-    <span class="ar">تواصل معي</span>
-  </a>
-</div>
-
-    <div class="tools-row">
-      <div class="tool-icon ti-py" title="Python">🐍</div>
-      <div class="tool-icon ti-pd" title="Pandas">🐼</div>
-      <div class="tool-icon ti-xg" title="XGBoost">⚡</div>
-      <div class="tool-icon ti-pr" title="Prophet">📈</div>
-      <div class="tool-icon ti-sk" title="Sklearn">🤖</div>
-      <div class="tool-icon ti-pl" title="Plotly">📊</div>
-      <div class="tool-icon ti-st" title="Streamlit">🎯</div>
-      <div class="tool-icon ti-sq" title="SQL">🗄️</div>
-    </div>
-
-    <div class="scroll-hint">
-      <span><span class="en">Scroll</span><span class="ar">مرر للأسفل</span></span>
-      <span>↓</span>
-    </div>
-  </div>
-</section>
-
-<!-- Projects -->
-<section id="projects">
-  <div class="container">
-    <div class="fade-up">
-      <p class="sec-label"><span class="en">Portfolio</span><span class="ar">أعمالي</span></p>
-      <h2 class="sec-title en-b">Featured Projects</h2>
-      <h2 class="sec-title ar-b">المشاريع المميزة</h2>
-      <p class="sec-sub en-b">Real-world problems solved with data science and machine learning.</p>
-      <p class="sec-sub ar-b">مشاكل حقيقية حُلّت باستخدام علم البيانات والتعلم الآلي.</p>
-      <div class="divider"></div>
-    </div>
-    <div class="projects-grid">
-
-      <div class="project-card fade-up">
-        <span class="p-icon">🛒</span>
-        <h3><span class="en">Walmart Sales Forecasting</span><span class="ar">التنبؤ بمبيعات وول مارت</span></h3>
-        <p class="en-b">Predicted weekly sales across 45 stores and 99 departments using XGBoost with custom WMAE metric. R² = 0.943</p>
-        <p class="ar-b">تنبؤ بالمبيعات الأسبوعية لـ 45 متجراً و99 قسماً باستخدام XGBoost مع مقياس WMAE مخصص. R² = 0.943</p>
-        <div class="tags"><span class="tag v">XGBoost</span><span class="tag o">Time Series</span><span class="tag b">WMAE</span></div>
-        <a href="https://www.kaggle.com/code/binaliy/walmart-recruiting-store-sales-forecasting1" class="p-link" target="_blank" rel="noopener noreferrer">
-          <span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span>
-        </a>
-      </div>
-
-      <div class="project-card fade-up">
-        <span class="p-icon">✈️</span>
-        <h3><span class="en">Air Passengers Forecasting</span><span class="ar">التنبؤ بعدد ركاب الطيران</span></h3>
-        <p class="en-b">Monthly forecasting using Facebook Prophet with multiplicative seasonality and manual grid search tuning. R² = 0.936</p>
-        <p class="ar-b">تنبؤ شهري باستخدام Prophet مع الموسمية التضاعفية وضبط المعاملات يدوياً. R² = 0.936</p>
-        <div class="tags"><span class="tag v">Prophet</span><span class="tag o">Forecasting</span><span class="tag g">Cross-Val</span></div>
-        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
-          <span class="en">GitHub ↗</span><span class="ar">↗ جيت هاب</span>
-        </a>
-      </div>
-
-      <div class="project-card fade-up">
-        <span class="p-icon">🏠</span>
-        <h3><span class="en">House Price Prediction</span><span class="ar">التنبؤ بأسعار المنازل</span></h3>
-        <p class="en-b">End-to-end regression pipeline with XGBoost, feature engineering and hyperparameter tuning via GridSearchCV.</p>
-        <p class="ar-b">نظام تنبؤ متكامل بأسعار المنازل باستخدام XGBoost وهندسة الميزات.</p>
-        <div class="tags"><span class="tag v">XGBoost</span><span class="tag b">Regression</span><span class="tag g">GridSearchCV</span></div>
-        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
-          <span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span>
-        </a>
-      </div>
-
-      <div class="project-card fade-up">
-        <span class="p-icon">🛡️</span>
-        <h3><span class="en">Credit Card Fraud Detection</span><span class="ar">كشف الاحتيال المالي</span></h3>
-        <p class="en-b">Imbalanced classification with 99.8% non-fraud data using SMOTE, class weights and ROC-AUC optimization.</p>
-        <p class="ar-b">تصنيف البيانات غير المتوازنة بنسبة احتيال 0.2% باستخدام SMOTE وأوزان الفئات.</p>
-        <div class="tags"><span class="tag v">Random Forest</span><span class="tag o">SMOTE</span><span class="tag b">ROC-AUC</span></div>
-        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
-          <span class="en">Kaggle ↗</span><span class="ar">↗ كاغل</span>
-        </a>
-      </div>
-
-      <div class="project-card fade-up">
-        <span class="p-icon">🏥</span>
-        <h3><span class="en">Diabetes Prediction</span><span class="ar">التنبؤ بمرض السكري</span></h3>
-        <p class="en-b">Solo project using Logistic Regression and Random Forest with thorough EDA and feature engineering.</p>
-        <p class="ar-b">مشروع مستقل باستخدام Logistic Regression وRandom Forest مع تحليل استكشافي شامل.</p>
-        <div class="tags"><span class="tag v">Logistic Reg</span><span class="tag g">Classification</span><span class="tag o">EDA</span></div>
-        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
-          <span class="en">GitHub ↗</span><span class="ar">↗ جيت هاب</span>
-        </a>
-      </div>
-
-      <div class="project-card fade-up">
-        <span class="p-icon">📊</span>
-        <h3><span class="en">E-Commerce RFM Dashboard</span><span class="ar">لوحة RFM للتجارة الإلكترونية</span></h3>
-        <p class="en-b">Interactive customer segmentation dashboard built with Streamlit analyzing Recency, Frequency and Monetary value.</p>
-        <p class="ar-b">لوحة تفاعلية لتقسيم العملاء بـ Streamlit تحلل مؤشرات الشراء والتكرار والقيمة المالية.</p>
-        <div class="tags"><span class="tag v">Streamlit</span><span class="tag o">RFM</span><span class="tag b">Plotly</span></div>
-        <a href="#" class="p-link" target="_blank" rel="noopener noreferrer">
-          <span class="en">Live Demo ↗</span><span class="ar">↗ تجربة مباشرة</span>
-        </a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- Skills -->
-<section id="skills">
-  <div class="container">
-    <div class="fade-up">
-      <p class="sec-label"><span class="en">Expertise</span><span class="ar">خبراتي</span></p>
-      <h2 class="sec-title en-b">Skills & Tools</h2>
-      <h2 class="sec-title ar-b">المهارات والأدوات</h2>
-      <p class="sec-sub en-b">Technologies and concepts I work with daily.</p>
-      <p class="sec-sub ar-b">التقنيات والمفاهيم التي أعمل بها يومياً.</p>
-      <div class="divider"></div>
-    </div>
-    <div class="skills-grid fade-up">
-      <div class="skill-group">
-        <div class="sg-title"><span class="en">Machine Learning</span><span class="ar">تعلم الآلة</span></div>
-        <div class="sk"><span class="sk-name">XGBoost</span><div class="sk-bar"><div class="sk-fill" style="width:90%"></div></div><span class="sk-pct">90%</span></div>
-        <div class="sk"><span class="sk-name">Random Forest</span><div class="sk-bar"><div class="sk-fill" style="width:85%"></div></div><span class="sk-pct">85%</span></div>
-        <div class="sk"><span class="sk-name">Logistic Reg</span><div class="sk-bar"><div class="sk-fill" style="width:85%"></div></div><span class="sk-pct">85%</span></div>
-        <div class="sk"><span class="sk-name">Prophet</span><div class="sk-bar"><div class="sk-fill" style="width:78%"></div></div><span class="sk-pct">78%</span></div>
-      </div>
-      <div class="skill-group">
-        <div class="sg-title"><span class="en">Data & Analysis</span><span class="ar">البيانات والتحليل</span></div>
-        <div class="sk"><span class="sk-name">Pandas</span><div class="sk-bar"><div class="sk-fill o" style="width:92%"></div></div><span class="sk-pct">92%</span></div>
-        <div class="sk"><span class="sk-name">NumPy</span><div class="sk-bar"><div class="sk-fill o" style="width:88%"></div></div><span class="sk-pct">88%</span></div>
-        <div class="sk"><span class="sk-name">SQL</span><div class="sk-bar"><div class="sk-fill o" style="width:82%"></div></div><span class="sk-pct">82%</span></div>
-        <div class="sk"><span class="sk-name">Sklearn</span><div class="sk-bar"><div class="sk-fill o" style="width:87%"></div></div><span class="sk-pct">87%</span></div>
-      </div>
-      <div class="skill-group">
-        <div class="sg-title"><span class="en">Visualization</span><span class="ar">التصوير البياني</span></div>
-        <div class="sk"><span class="sk-name">Plotly</span><div class="sk-bar"><div class="sk-fill b" style="width:90%"></div></div><span class="sk-pct">90%</span></div>
-        <div class="sk"><span class="sk-name">Streamlit</span><div class="sk-bar"><div class="sk-fill b" style="width:80%"></div></div><span class="sk-pct">80%</span></div>
-        <div class="sk"><span class="sk-name">Jupyter</span><div class="sk-bar"><div class="sk-fill b" style="width:92%"></div></div><span class="sk-pct">92%</span></div>
-        <div class="sk"><span class="sk-name">Matplotlib</span><div class="sk-bar"><div class="sk-fill b" style="width:75%"></div></div><span class="sk-pct">75%</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Contact -->
-<section id="contact">
-  <div class="container">
-    <div class="contact-wrap fade-up">
-      <h3 class="en-b">Let's Work Together</h3>
-      <h3 class="ar-b">لنعمل معاً</h3>
-      <p class="en-b">Looking for a data science internship. If you have an opportunity that might be a good fit, I'd love to connect!</p>
-      <p class="ar-b">أبحث عن فرصة تدريب في مجال علم البيانات. إذا كان لديك فرصة مناسبة، يسعدني التواصل معك!</p>
-      <div class="c-links">
-        <a href="mailto:contact.yasser.alali@gmail.com" class="c-link">📧 <span class="en">Email</span><span class="ar">البريد الإلكتروني</span></a>
-        <a href="https://github.com/ContactYasser?tab=repositories" class="c-link" target="_blank" rel="noopener noreferrer">💻 GitHub</a>
-        <a href="https://www.kaggle.com/binaliy/code" class="c-link" target="_blank" rel="noopener noreferrer">🏆 Kaggle</a>
-        <a href="https://www.linkedin.com/in/yasser-alali/" class="c-link" target="_blank" rel="noopener noreferrer">💼 LinkedIn</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p><span class="en">Built by Yasser · Data Scientist</span><span class="ar">من تصميم ياسر · عالم بيانات</span></p>
-</footer>
-
-<script>
-// Logic to handle language switching and state saving
-function setLang(l) {
-  document.documentElement.lang = l;
-  document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ياسر — عالم بيانات | Yasser — Data Scientist</title>
   
-  // Save preference to local storage
-  localStorage.setItem('yasser-pref-lang', l);
-
-  // Update button active states
-  document.querySelectorAll('.lang-btn').forEach(b => {
-    b.classList.remove('active');
-    const text = b.textContent.trim().toLowerCase();
-    if(text === l || (l === 'ar' && text === 'عربي')) {
-      b.classList.add('active');
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandBg: '#07071a',
+            brandCard: 'rgba(255, 255, 255, 0.03)',
+            brandBorder: 'rgba(255, 255, 255, 0.08)',
+            accentViolet: '#7c3aed',
+            accentOrange: '#f97316',
+            accentBlue: '#3b82f6',
+            textMuted: '#8888bb',
+            textLight: '#eeeeff'
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+            dmsans: ['DM Sans', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
     }
-  });
-}
+  </script>
 
-// Initialization on Page Load
-window.addEventListener('load', () => {
-  // 1. Restore Language Preference
-  const savedLang = localStorage.getItem('yasser-pref-lang') || 'ar';
-  setLang(savedLang);
-
-  // 2. Allow browser to handle scroll restoration naturally
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'auto';
-  }
-});
-
-// Animation Observer
-const obs = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 80);
+  <style>
+    :root {
+      --bg: #07071a;
+      --accent: #7c3aed;
     }
-  });
-}, { threshold: 0.08 });
+    body {
+      background-color: var(--bg);
+      font-family: 'Cairo', 'DM Sans', sans-serif;
+    }
+    /* Ambient backdrop glow layers */
+    .glow-bg {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* Customized elegant scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(7, 7, 26, 0.95);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(124, 58, 237, 0.25);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(124, 58, 237, 0.45);
+    }
+    
+    /* Animation Fade Up Transitions */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
-</script>
+    /* Bilingual logic toggle displays */
+    .en, .ar { display: none; }
+    html[lang="en"] .en { display: revert; }
+    html[lang="ar"] .ar { display: revert; }
+
+    .en-inline, .ar-inline { display: none; }
+    html[lang="en"] .en-inline { display: inline; }
+    html[lang="ar"] .ar-inline { display: inline; }
+
+    .en-block, .ar-block { display: none !important; }
+    html[lang="en"] .en-block { display: block !important; }
+    html[lang="ar"] .ar-block { display: block !important; }
+  </style>
+</head>
+<body class="text-[#eeeeff] bg-brandBg min-h-screen relative overflow-x-hidden selection:bg-accentViolet selection:text-white">
+
+  <!-- Glow Background Layout Decorator -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="glow-bg top-[-10%] left-[-10%] animate-pulse-slow"></div>
+    <div class="glow-bg bottom-[10%] right-[-10%] opacity-85" style="background: radial-gradient(circle, rgba(234, 88, 12, 0.08) 0%, transparent 70%);"></div>
+    <div class="glow-bg top-[35%] left-[25%] opacity-60" style="background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);"></div>
+  </div>
+
+  <!-- Navigation Header -->
+  <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-brandBg/60 border-b border-brandBorder px-6 py-4 transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a href="#home" class="text-xl font-black tracking-tight hover:opacity-85 transition-opacity">
+        <span class="en">Yasser <span class="text-accentViolet">.</span></span>
+        <span class="ar">ياسر <span class="text-accentViolet">.</span></span>
+      </a>
+
+      <!-- Mid Navigation Links (ML Playground removed) -->
+      <ul class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium text-textMuted select-none">
+        <li>
+          <a href="#home" class="px-4 py-2 hover:text-textLight transition-colors">
+            <span class="en">Home</span><span class="ar">الرئيسية</span>
+          </a>
+        </li>
+        <li>
+          <a href="#projects" class="px-4 py-2 hover:text-textLight transition-colors">
+            <span class="en">Projects</span><span class="ar">المشاريع</span>
+          </a>
+        </li>
+        <li>
+          <a href="#skills" class="px-4 py-2 hover:text-textLight transition-colors">
+            <span class="en">Skills</span><span class="ar">المهارات</span>
+          </a>
+        </li>
+        <li>
+          <a href="#contact" class="px-4 py-2 hover:text-textLight transition-colors">
+            <span class="en">Contact</span><span class="ar">اتصل بي</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Language Switch & Menu CTA -->
+      <div class="flex items-center gap-4">
+        <!-- Language Selector Badge -->
+        <div class="bg-accentViolet/10 border border-accentViolet/30 p-1 rounded-full flex items-center">
+          <button id="lang-en" onclick="setLanguage('en')" class="px-3 py-1 rounded-full text-xs font-bold transition-all text-textMuted hover:text-textLight">EN</button>
+          <button id="lang-ar" onclick="setLanguage('ar')" class="px-3 py-1 rounded-full text-xs font-bold transition-all text-textMuted hover:text-textLight">عربي</button>
+        </div>
+
+        <!-- Mobile Hamburg Menu -->
+        <button id="mobile-menu-btn" class="md:hidden text-textLight focus:outline-none p-1">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer Menu (No ML Playground link) -->
+  <div id="mobile-drawer" class="fixed inset-0 z-45 bg-brandBg/95 backdrop-blur-lg transform translate-x-full transition-transform duration-300 md:hidden flex flex-col justify-center p-8 border-l border-brandBorder">
+    <button id="close-drawer-btn" class="absolute top-6 right-6 text-textLight">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+    <ul class="space-y-6 text-2xl font-bold text-center">
+      <li><a href="#home" onclick="toggleDrawer()" class="block text-textMuted hover:text-textLight transition-colors"><span class="en">Home</span><span class="ar">الرئيسية</span></a></li>
+      <li><a href="#projects" onclick="toggleDrawer()" class="block text-textMuted hover:text-textLight transition-colors"><span class="en">Projects</span><span class="ar">المشاريع</span></a></li>
+      <li><a href="#skills" onclick="toggleDrawer()" class="block text-textMuted hover:text-textLight transition-colors"><span class="en">Skills</span><span class="ar">المهارات</span></a></li>
+      <li><a href="#contact" onclick="toggleDrawer()" class="block text-textMuted hover:text-textLight transition-colors"><span class="en">Contact</span><span class="ar">اتصل بي</span></a></li>
+    </ul>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="home" class="min-h-screen flex items-center justify-center relative pt-24 pb-16 px-6 z-10">
+    <div class="max-w-4xl mx-auto text-center">
+      <!-- Availability Status Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm text-white/80 mb-8 select-none">
+        <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+        <span class="en">Available for Co-op Internships & Opportunities</span>
+        <span class="ar">متاح للتدريب التعاوني والفرص المهنية</span>
+      </div>
+
+      <!-- Main Headline Name Card -->
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black leading-tight sm:leading-none tracking-tight mb-8">
+        <span class="en-block">👋 Hi, I'm <span class="bg-gradient-to-r from-accentViolet to-accentOrange bg-clip-text text-transparent">Yasser</span><br><span class="text-2xl sm:text-5xl lg:text-6xl mt-2 block text-white font-medium">Data Scientist</span></span>
+        <span class="ar-block">👋 أهلاً، أنا <span class="bg-gradient-to-r from-accentViolet to-accentOrange bg-clip-text text-transparent">ياسر</span><br><span class="text-2xl sm:text-5xl lg:text-6xl mt-2 block text-white font-medium font-cairo">عالم بيانات</span></span>
+      </h1>
+
+      <!-- Portfolio Subtitles -->
+      <p class="max-w-2xl mx-auto text-base sm:text-lg text-textMuted leading-relaxed mb-10 font-light">
+        <span class="en">I specialize in turning unstructured datasets into predictive pipelines, clustering customer behaviors, forecasting complex seasonal dynamics, and engineering deployment-ready machine learning solutions.</span>
+        <span class="ar">متخصص في تحويل البيانات المعقدة والسلاسل الزمنية إلى نماذج تنبؤية ذكية، وتقسيم سلوكيات العملاء، وتطوير البنى البرمجية والحلول التحليلية المتكاملة لتعلم الآلة.</span>
+      </p>
+
+      <!-- Action Button Tray -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+        <a href="#projects" class="w-full sm:w-auto px-8 py-3.5 rounded-full font-bold text-sm bg-gradient-to-r from-accentViolet to-accentOrange text-white shadow-[0_0_25px_rgba(124,58,237,0.4)] hover:shadow-[0_4px_30px_rgba(124,58,237,0.6)] hover:-translate-y-0.5 transition-all duration-200">
+          <span class="en">Explore 10 Projects</span>
+          <span class="ar">تصفح 10 مشاريع عملية</span>
+        </a>
+        <a href="mailto:contact.yasser.alali@gmail.com" class="w-full sm:w-auto px-8 py-3.5 rounded-full font-bold text-sm bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white transition-all text-textLight">
+          <span class="en">Get In Touch</span>
+          <span class="ar">تواصل معي</span>
+        </a>
+      </div>
+
+      <!-- Quick Ecosystem Icons -->
+      <div class="border-t border-brandBorder/60 pt-10">
+        <p class="text-xs uppercase tracking-wider text-textMuted/70 mb-5 font-semibold">
+          <span class="en">Core Expertise Ecosystem</span>
+          <span class="ar">التقنيات الأساسية التي أعمل بها</span>
+        </p>
+        <div class="flex flex-wrap gap-2.5 justify-center items-center">
+          <div class="px-3.5 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs font-semibold flex items-center gap-1.5 text-blue-400">
+            <span>🐍</span> Python
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs font-semibold flex items-center gap-1.5 text-purple-400">
+            <span>🐼</span> Pandas
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs font-semibold flex items-center gap-1.5 text-orange-400">
+            <span>⚡</span> XGBoost
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-xs font-semibold flex items-center gap-1.5 text-red-400">
+            <span>📈</span> FB Prophet
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs font-semibold flex items-center gap-1.5 text-teal-400">
+            <span>🤖</span> Scikit-Learn
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold flex items-center gap-1.5 text-indigo-400">
+            <span>📊</span> Plotly
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-xs font-semibold flex items-center gap-1.5 text-yellow-400">
+            <span>🎯</span> Streamlit
+          </div>
+          <div class="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold flex items-center gap-1.5 text-emerald-400">
+            <span>🗄️</span> SQL
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Portfolio Grid Section -->
+  <section id="projects" class="py-24 px-6 relative z-10 border-t border-brandBorder/40">
+    <div class="max-w-7xl mx-auto">
+      <div class="fade-up flex flex-col md:flex-row md:items-end justify-between mb-12">
+        <div>
+          <p class="text-xs font-bold text-accentViolet uppercase tracking-widest mb-2">
+            <span class="en">Portfolio Case Studies</span>
+            <span class="ar">مشاريع دراسة الحالة</span>
+          </p>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <span class="en">Featured ML Projects</span>
+            <span class="ar">المشاريع المميزة والبارزة</span>
+          </h2>
+          <p class="text-textMuted text-sm sm:text-base mt-2 max-w-lg font-light">
+            <span class="en">Review the 10 data science projects showcasing statistical modeling, forecasting pipelines, and business analysis.</span>
+            <span class="ar">تصفح تفاصيل 10 مشاريع متميزة في مجالات التعلم الآلي، التنبؤ بالسلاسل الزمنية، وتصنيف وتجزئة البيانات.</span>
+          </p>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="mt-6 md:mt-0 flex flex-wrap gap-2 text-xs select-none">
+          <button onclick="filterProjects('all')" class="project-filter-btn px-4 py-2 rounded-full font-bold transition-all border border-brandBorder bg-white/5 text-white active-filter-btn" id="filter-all">
+            <span class="en">All</span><span class="ar">الكل</span>
+          </button>
+          <button onclick="filterProjects('ml')" class="project-filter-btn px-4 py-2 rounded-full font-bold transition-all border border-brandBorder bg-transparent text-textMuted hover:text-white" id="filter-ml">
+            <span class="en">Prediction & ML</span><span class="ar">التعلم الآلي والنمذجة</span>
+          </button>
+          <button onclick="filterProjects('forecasting')" class="project-filter-btn px-4 py-2 rounded-full font-bold transition-all border border-brandBorder bg-transparent text-textMuted hover:text-white" id="filter-forecasting">
+            <span class="en">Forecasting</span><span class="ar">التنبؤ بالسلاسل</span>
+          </button>
+          <button onclick="filterProjects('clustering')" class="project-filter-btn px-4 py-2 rounded-full font-bold transition-all border border-brandBorder bg-transparent text-textMuted hover:text-white" id="filter-clustering">
+            <span class="en">Clustering & Segment</span><span class="ar">تقسيم وتجميع البيانات</span>
+          </button>
+          <button onclick="filterProjects('nlp')" class="project-filter-btn px-4 py-2 rounded-full font-bold transition-all border border-brandBorder bg-transparent text-textMuted hover:text-white" id="filter-nlp">
+            <span class="en">NLP</span><span class="ar">معالجة اللغة الطبيعية</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 10 Projects Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-container">
+        
+        <!-- Case 1: E-Commerce RFM Customer Segmentation -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="clustering">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">📊</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-accentViolet px-2.5 py-1 rounded-full bg-accentViolet/10">Clustering</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-accentViolet transition-colors">
+              <span class="en">E-Commerce RFM Customer Segmentation</span>
+              <span class="ar">تقسيم العملاء للتجارة الإلكترونية (RFM)</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Designed a buyer classification dashboard processing e-commerce invoices into Recency, Frequency, and Monetary indices to isolate "At Risk" and "Champion" shoppers.</span>
+              <span class="ar">تصنيف العملاء باستخدام مؤشرات الحداثة، والتكرار، والقيمة المالية لتحديد المجموعات الشرائية الأكثر ولاءً والمعرضة للمغادرة.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">K-Means</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Streamlit</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Plotly</span>
+            </div>
+            <button onclick="openModal(1)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-accentViolet/10 hover:bg-accentViolet/20 text-accentViolet font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 2: Property Value Predictor -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="ml">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🏠</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-accentOrange px-2.5 py-1 rounded-full bg-accentOrange/10">Regression</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-accentOrange transition-colors">
+              <span class="en">Property Value Predictor</span>
+              <span class="ar">متنبئ قيمة العقارات السكنية</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Build real estate valuation engines by filtering anomalies, testing several models, and utilizing demographics like income to estimate property values.</span>
+              <span class="ar">بناء نموذج لتقدير أسعار العقارات السكنية بناءً على معطيات الحي الجغرافي والدخل السنوي وتعداد الغرف مع تصفية البيانات الشاذة.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">XGBoost</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Scikit-Learn</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">EDA</span>
+            </div>
+            <button onclick="openModal(2)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-accentOrange/10 hover:bg-accentOrange/20 text-accentOrange font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 3: Credit Card Fraud Detector -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="ml">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🛡️</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-blue-400 px-2.5 py-1 rounded-full bg-blue-500/10">Classification</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+              <span class="en">Credit Card Fraud Detector</span>
+              <span class="ar">نظام كشف الاحتيال للبطاقات الائتمانية</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Tackled highly imbalanced transactional data (under 0.2% fraud incidents) using SMOTE techniques to construct a robust detection guard.</span>
+              <span class="ar">معالجة وتصنيف بيانات العمليات المالية الاحتيالية والموازنة بين البيانات غير المتماثلة بنسبة %0.2 باستخدام خوارزميات SMOTE.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">SMOTE</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Random Forest</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">ROC-AUC</span>
+            </div>
+            <button onclick="openModal(3)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 4: Medical Diagnosis & Diabetes Assessment -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="ml">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🏥</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-emerald-400 px-2.5 py-1 rounded-full bg-emerald-500/10">Healthcare</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+              <span class="en">Diabetes Clinical Risk Assessment</span>
+              <span class="ar">تقييم مخاطر السكري والرعاية الصحية</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Uncovered disguised null metrics (zeros in blood pressure/BMI) and optimized clinical diagnostic logic to minimize false negatives.</span>
+              <span class="ar">تحديد المؤشرات الطبية الفارغة المخفية كأصفار ومعالجتها لضبط دقة تقييم المخاطر وتفادي الحالات السلبية الخاطئة.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Recall Optimization</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Random Forest</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">EDA</span>
+            </div>
+            <button onclick="openModal(4)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 5: Flight Passenger Volume Forecaster -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="forecasting">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">✈️</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-pink-400 px-2.5 py-1 rounded-full bg-pink-500/10">Forecasting</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-pink-400 transition-colors">
+              <span class="en">Flight Passenger Volume Forecaster</span>
+              <span class="ar">التنبؤ بحجم تدفق ركاب الطيران</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Structured seasonal chronological logs to isolate vacation surges and baseline travel trends using Prophet models.</span>
+              <span class="ar">تحليل بيانات حركات السفر ونموذجة الموسمية لتوقع حجم وتدفق ركاب الطيران مستقبلياً باستخدام Facebook Prophet.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Prophet</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Cross-Validation</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Time-Series</span>
+            </div>
+            <button onclick="openModal(5)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 6: Retail Store Sales Forecaster -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="forecasting">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🛒</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-purple-400 px-2.5 py-1 rounded-full bg-purple-500/10">Time Series</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">
+              <span class="en">Retail Store Sales Forecaster</span>
+              <span class="ar">التنبؤ بمبيعات المتاجر بالتجزئة</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Synthesized localized factors like fuel indexes, temperatures, and holiday promotional spikes to predict department revenue levels.</span>
+              <span class="ar">دمج وتحليل مبيعات الأقسام مع معطيات أسعار الوقود ومواسم العطلات للتنبؤ بمبيعات سلسلة المتاجر بدقة R² = 0.943.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">XGBoost</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">WMAE</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Walmart Sales</span>
+            </div>
+            <button onclick="openModal(6)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 7: Grid Power Consumption Tracking -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="forecasting">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🔌</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-amber-500 px-2.5 py-1 rounded-full bg-amber-500/10">Utilities</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-amber-500 transition-colors">
+              <span class="en">Grid Power Consumption Tracking</span>
+              <span class="ar">تتبع وتنبؤ استهلاك شبكة الكهرباء</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Analyzed hourly electrical utilization metrics to isolate weekly load shifts and long-term grid consumption patterns.</span>
+              <span class="ar">تتبع وتحليل تدفق أحمال الطاقة والكهرباء بالساعات لفهم تباين الاستهلاك اليومي والموسمي لتفادي ضغوط الشبكة.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Time-Series</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Hourly Analysis</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Seaborn</span>
+            </div>
+            <button onclick="openModal(7)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 8: Mall Customer Spending Typologies -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="clustering">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🛍️</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-indigo-400 px-2.5 py-1 rounded-full bg-indigo-500/10">Marketing</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-indigo-400 transition-colors">
+              <span class="en">Mall Customer Spending Typologies</span>
+              <span class="ar">تصنيف أنماط إنفاق متسوقي المجمعات</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Discovered hidden buyer subgroups by analyzing individual income and spending scores with Unsupervised K-Means clustering.</span>
+              <span class="ar">استخدام التعلم غير الخاضع للإشراف وتطبيق خوارزمية K-Means لتصنيف المتسوقين وتحديد الشرائح الأكثر فاعلية تسويقياً.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">K-Means</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Clustering</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Elbow Method</span>
+            </div>
+            <button onclick="openModal(8)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 9: Credit Card Behavior Profiling -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="clustering">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">💳</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-sky-400 px-2.5 py-1 rounded-full bg-sky-500/10">Fintech</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-sky-400 transition-colors">
+              <span class="en">Credit Card Behavior Profiling</span>
+              <span class="ar">تحليل سلوك حاملي البطاقات الائتمانية</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Condensed multi-dimensional account metrics like cash advance spikes and installment ratios using Principal Component Analysis (PCA).</span>
+              <span class="ar">تحليل وضغط أبعاد المعطيات المالية المعقدة لحسابات البطاقات الائتمانية باستخدام تقنيات PCA لإنتاج فئات تصنيفية واضحة.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">PCA</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Clustering</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Dimensionality</span>
+            </div>
+            <button onclick="openModal(9)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Case 10: Film Review Sentiment Classifier -->
+        <div class="project-card fade-up p-6 rounded-2xl bg-brandCard border border-brandBorder hover:border-accentViolet/40 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between" data-category="nlp">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-3xl">🎬</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest text-teal-400 px-2.5 py-1 rounded-full bg-teal-500/10">NLP</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-teal-400 transition-colors">
+              <span class="en">Film Review Sentiment Classifier</span>
+              <span class="ar">مصنف المشاعر لتقييمات الأفلام السينمائية</span>
+            </h3>
+            <p class="text-textMuted text-xs sm:text-sm mb-4 leading-relaxed font-light">
+              <span class="en">Stripped messy online reviews of raw HTML markup, structured textual inputs with N-grams/TF-IDF, and mapped text polarities.</span>
+              <span class="ar">تنظيف النصوص من وسوم HTML والروابط غير المنظمة وتطبيق خوارزميات TF-IDF لتصنيف الآراء والتعليقات بدقة إلى إيجابية أو سلبية.</span>
+            </p>
+          </div>
+          <div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">TF-IDF</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">N-grams</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/5 border border-white/10 text-textMuted">Classification</span>
+            </div>
+            <button onclick="openModal(10)" class="w-full text-center text-xs py-2 px-4 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 font-semibold transition-colors">
+              <span class="en">Explore Case Study ↗</span>
+              <span class="ar">استعرض دراسة الحالة ↗</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Matrix Section (No Percentages, Clean Categories and Lists) -->
+  <section id="skills" class="py-24 px-6 relative z-10 border-t border-brandBorder/40">
+    <div class="max-w-6xl mx-auto">
+      <div class="fade-up text-center mb-16">
+        <p class="text-xs font-bold text-accentViolet uppercase tracking-widest mb-2">
+          <span class="en">Expertise Depth</span>
+          <span class="ar">الخبرات والمهارات</span>
+        </p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <span class="en">Technical Core Matrix</span>
+          <span class="ar">المهارات التقنية والمنهجية</span>
+        </h2>
+        <p class="text-textMuted text-sm sm:text-base mt-2 max-w-lg mx-auto font-light">
+          <span class="en">A detailed breakdown of key frameworks and machine learning disciplines applied across my project portfolio.</span>
+          <span class="ar">استعراض منظم للمنهجيات، الأدوات، والأنظمة الأساسية التي تم تطبيقها عملياً عبر مختلف مشاريع علم البيانات.</span>
+        </p>
+        <div class="w-12 h-1 bg-gradient-to-r from-accentViolet to-accentOrange mx-auto mt-4 rounded-full"></div>
+      </div>
+
+      <!-- Skills Matrix Panels Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+        
+        <!-- Skill Group 1: Machine Learning & Modeling -->
+        <div class="fade-up p-6 sm:p-8 rounded-2xl bg-brandCard border border-brandBorder flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3 mb-6 pb-3 border-b border-brandBorder/60">
+              <span class="text-2xl">🤖</span>
+              <h3 class="text-sm font-extrabold text-white uppercase tracking-wider">
+                <span class="en">Machine Learning & Modeling</span>
+                <span class="ar">تعلم الآلة والنمذجة الرياضية</span>
+              </h3>
+            </div>
+            
+            <p class="text-textMuted text-xs sm:text-sm mb-6 leading-relaxed font-light">
+              <span class="en">Designing structured classification, regression, and learning pipelines optimized for real-world scenarios.</span>
+              <span class="ar">تصنيف وهندسة الأنماط التنبؤية، الانحدار، والأنظمة البرمجية المثبتة لبيانات معقدة.</span>
+            </p>
+
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 font-medium">XGBoost Ensembles</span>
+              <span class="px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 font-medium">Random Forest</span>
+              <span class="px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 font-medium">Logistic Regression</span>
+              <span class="px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 font-medium">Hyperparameter Tuning</span>
+              <span class="px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 font-medium">GridSearchCV</span>
+              <span class="px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 font-medium">Classification Metrics</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill Group 2: Time-Series & Forecasting -->
+        <div class="fade-up p-6 sm:p-8 rounded-2xl bg-brandCard border border-brandBorder flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3 mb-6 pb-3 border-b border-brandBorder/60">
+              <span class="text-2xl">📈</span>
+              <h3 class="text-sm font-extrabold text-white uppercase tracking-wider">
+                <span class="en">Time-Series & Forecasting</span>
+                <span class="ar">تحليل وتوقع السلاسل الزمنية</span>
+              </h3>
+            </div>
+            
+            <p class="text-textMuted text-xs sm:text-sm mb-6 leading-relaxed font-light">
+              <span class="en">Modeling temporal characteristics, seasonal trends, and predictive schedules with historic sequences.</span>
+              <span class="ar">نمذجة التغيرات الزمنية والاتجاهات الموسمية وتقدير حجم الإقبال والتدفق لمتغيرات متعددة.</span>
+            </p>
+
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs text-orange-400 font-medium">Facebook Prophet</span>
+              <span class="px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs text-orange-400 font-medium">Multiplicative Seasonality</span>
+              <span class="px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs text-orange-400 font-medium">Cross-Validation over Time</span>
+              <span class="px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs text-orange-400 font-medium">Custom WMAE Loss</span>
+              <span class="px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-xs text-orange-400 font-medium">Univariate & Multivariate Analysis</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill Group 3: Data Engineering & Wrangling -->
+        <div class="fade-up p-6 sm:p-8 rounded-2xl bg-brandCard border border-brandBorder flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3 mb-6 pb-3 border-b border-brandBorder/60">
+              <span class="text-2xl">⚙️</span>
+              <h3 class="text-sm font-extrabold text-white uppercase tracking-wider">
+                <span class="en">Data Engineering & Wrangling</span>
+                <span class="ar">هندسة ومعالجة البيانات المتنوعة</span>
+              </h3>
+            </div>
+            
+            <p class="text-textMuted text-xs sm:text-sm mb-6 leading-relaxed font-light">
+              <span class="en">Executing clean-ups, scaling inputs, handling imbalanced sets, and managing dimensional compressions.</span>
+              <span class="ar">تنظيف البيانات الشاذة، تعويض القيم المفقودة، موازنة البيانات النادرة، وتقليص الأبعاد الرياضية.</span>
+            </p>
+
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-medium">Pandas & NumPy</span>
+              <span class="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-medium">Feature Engineering</span>
+              <span class="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-medium">SMOTE Oversampling</span>
+              <span class="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-medium">PCA Dimensionality Reduction</span>
+              <span class="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-medium">Outlier Truncation</span>
+              <span class="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 font-medium">SQL Querying</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill Group 4: NLP, Visualizations & Dashboards -->
+        <div class="fade-up p-6 sm:p-8 rounded-2xl bg-brandCard border border-brandBorder flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-3 mb-6 pb-3 border-b border-brandBorder/60">
+              <span class="text-2xl">📊</span>
+              <h3 class="text-sm font-extrabold text-white uppercase tracking-wider">
+                <span class="en">NLP & Analytics Platforms</span>
+                <span class="ar">معالجة النصوص ومنصات العرض التفاعلية</span>
+              </h3>
+            </div>
+            
+            <p class="text-textMuted text-xs sm:text-sm mb-6 leading-relaxed font-light">
+              <span class="en">Constructing web applications, cleaning textual data, and building interactive 3D visualizations.</span>
+              <span class="ar">تطوير تطبيقات الويب السريعة ولوحات التحكم التفاعلية، ومعالجة النصوص اللغوية وتصنيف المشاعر.</span>
+            </p>
+
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs text-teal-400 font-medium">Streamlit Web Apps</span>
+              <span class="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs text-teal-400 font-medium">Plotly Interactive 3D</span>
+              <span class="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs text-teal-400 font-medium">TF-IDF Vectorization</span>
+              <span class="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs text-teal-400 font-medium">N-grams Analysis</span>
+              <span class="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs text-teal-400 font-medium">Seaborn & Matplotlib</span>
+              <span class="px-3 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs text-teal-400 font-medium">RFM Dashboard Mechanics</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-24 px-6 relative z-10 border-t border-brandBorder/40">
+    <div class="max-w-4xl mx-auto">
+      <div class="fade-up bg-gradient-to-br from-accentViolet/10 via-brandCard to-accentOrange/5 border border-brandBorder rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden">
+        <!-- Blur Glow Element inside contact wrapper -->
+        <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-accentViolet/15 blur-3xl pointer-events-none"></div>
+
+        <h3 class="text-2xl sm:text-4xl font-black text-white mb-4 relative z-10">
+          <span class="en">Let's Build Something Smarter</span>
+          <span class="ar">لنعمل معاً في تحويل البيانات إلى نجاح</span>
+        </h3>
+        <p class="text-textMuted text-sm sm:text-base max-w-lg mx-auto mb-10 relative z-10 font-light">
+          <span class="en">Currently looking for professional data science opportunities and internships. Let's discuss how my analytical pipelines can assist your operations.</span>
+          <span class="ar">أبحث حالياً عن فرصة تدريب تعاوني أو عمل كمطور لتعلم الآلة وعلم البيانات. يسعدني تواصلكم وتلقي المقترحات والملفات مباشرة.</span>
+        </p>
+
+        <!-- Social Icons & Contact Links -->
+        <div class="flex flex-wrap gap-3.5 justify-center relative z-10">
+          <a href="mailto:contact.yasser.alali@gmail.com" class="px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-accentViolet/50 text-xs sm:text-sm font-semibold flex items-center gap-2 text-textLight hover:text-white hover:bg-accentViolet/10 transition-all duration-200">
+            <span>📧</span> <span class="en">Email</span><span class="ar">البريد الإلكتروني</span>
+          </a>
+          <a href="https://github.com/ContactYasser?tab=repositories" target="_blank" rel="noopener noreferrer" class="px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-accentViolet/50 text-xs sm:text-sm font-semibold flex items-center gap-2 text-textLight hover:text-white hover:bg-accentViolet/10 transition-all duration-200">
+            <span>💻</span> GitHub
+          </a>
+          <a href="https://www.kaggle.com/binaliy/code" target="_blank" rel="noopener noreferrer" class="px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-accentViolet/50 text-xs sm:text-sm font-semibold flex items-center gap-2 text-textLight hover:text-white hover:bg-accentViolet/10 transition-all duration-200">
+            <span>🏆</span> Kaggle
+          </a>
+          <a href="https://www.linkedin.com/in/yasser-alali/" target="_blank" rel="noopener noreferrer" class="px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-accentViolet/50 text-xs sm:text-sm font-semibold flex items-center gap-2 text-textLight hover:text-white hover:bg-accentViolet/10 transition-all duration-200">
+            <span>💼</span> LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer block -->
+  <footer class="py-10 px-6 border-t border-brandBorder/40 relative z-10 text-center text-xs text-textMuted/60 font-medium select-none">
+    <p>
+      <span class="en">Built with passion by Yasser · Data Scientist & ML Engineer &copy; 2026</span>
+      <span class="ar">صنع بشغف بواسطة ياسر · عالم بيانات ومهندس تعلم آلي &copy; 2026</span>
+    </p>
+  </footer>
+
+  <!-- Project Modal Display (Detailed Case Studies for 10 Projects) -->
+  <div id="project-modal" class="fixed inset-0 z-50 overflow-y-auto bg-brandBg/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <!-- Modal Backdrop Layout Box -->
+    <div class="relative w-full max-w-3xl rounded-3xl bg-[#0b0b23] border border-brandBorder shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <!-- Close Trigger -->
+      <button onclick="closeModal()" class="absolute top-5 right-5 z-20 text-textMuted hover:text-white focus:outline-none p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+
+      <!-- Scrollable Contents -->
+      <div class="p-6 sm:p-10 overflow-y-auto space-y-6">
+        <div class="flex items-center gap-2 mb-2">
+          <span id="modal-category-badge" class="text-[10px] uppercase font-black tracking-widest text-accentViolet px-3 py-1 rounded-full bg-accentViolet/10">CASE STUDY</span>
+        </div>
+        
+        <h3 id="modal-title" class="text-xl sm:text-2xl font-black text-white leading-snug">
+          <!-- Populated by JS -->
+        </h3>
+
+        <!-- Core Grid Stack Matrix -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 py-4 border-y border-brandBorder/60 text-xs">
+          <div>
+            <span class="block text-textMuted/70 mb-0.5"><span class="en">Primary Stack</span><span class="ar">التقنيات المستخدمة</span></span>
+            <span id="modal-stack" class="font-bold text-white"><!-- Populated by JS --></span>
+          </div>
+          <div>
+            <span class="block text-textMuted/70 mb-0.5"><span class="en">Model Type</span><span class="ar">نوع النموذج</span></span>
+            <span id="modal-type" class="font-bold text-white"><!-- Populated by JS --></span>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <span class="block text-textMuted/70 mb-0.5"><span class="en">Target Metrics</span><span class="ar">النتائج ومقاييس النجاح</span></span>
+            <span id="modal-metrics" class="font-bold text-accentOrange"><!-- Populated by JS --></span>
+          </div>
+        </div>
+
+        <!-- Problem Tab -->
+        <div class="space-y-2">
+          <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+            <span>🔴</span>
+            <span class="en">The Challenge & Dataset Obstacles</span>
+            <span class="ar">التحدي وعقبات البيانات</span>
+          </h4>
+          <p id="modal-problem" class="text-xs sm:text-sm text-textMuted leading-relaxed font-light">
+            <!-- Populated by JS -->
+          </p>
+        </div>
+
+        <!-- Strategy Tab -->
+        <div class="space-y-2">
+          <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+            <span>⚙️</span>
+            <span class="en">Methodological Approach & Pipelines</span>
+            <span class="ar">طريقة العمل وحلول هندسة النماذج</span>
+          </h4>
+          <p id="modal-strategy" class="text-xs sm:text-sm text-textMuted leading-relaxed font-light">
+            <!-- Populated by JS -->
+          </p>
+        </div>
+
+        <!-- Outcome Tab -->
+        <div class="space-y-2">
+          <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+            <span>🏆</span>
+            <span class="en">Business Impact & Key Insights</span>
+            <span class="ar">أثر العمل والقرارات المستخلصة</span>
+          </h4>
+          <p id="modal-outcome" class="text-xs sm:text-sm text-textMuted leading-relaxed font-light">
+            <!-- Populated by JS -->
+          </p>
+        </div>
+      </div>
+
+      <!-- Modal Action Bar -->
+      <div class="px-6 py-4 bg-white/5 border-t border-brandBorder/60 flex items-center justify-between text-xs">
+        <span class="text-textMuted/80">
+          <span class="en">Project Portfolio</span>
+          <span class="ar">أعمال عالم البيانات ياسر</span>
+        </span>
+        <a id="modal-external-link" href="#" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-accentViolet hover:bg-accentViolet/80 text-white font-bold rounded-lg transition-all flex items-center gap-1">
+          <span class="en">View Notebook/Demo ↗</span>
+          <span class="ar">استعرض الكود أو المشروع ↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ----------------------------------------------------
+    // 1. Language Toggle Handler
+    // ----------------------------------------------------
+    function setLanguage(lang) {
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      
+      // Save localized configuration parameter inside browser
+      localStorage.setItem('yasser-pref-lang', lang);
+
+      // Deselect existing language switch keys
+      document.querySelectorAll('#lang-en, #lang-ar').forEach(btn => {
+        btn.classList.remove('bg-accentViolet', 'text-white', 'shadow-sm');
+        btn.classList.add('text-textMuted');
+      });
+
+      const activeBtn = document.getElementById(`lang-${lang}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-textMuted');
+        activeBtn.classList.add('bg-accentViolet', 'text-white', 'shadow-sm');
+      }
+    }
+
+    // ----------------------------------------------------
+    // 2. Mobile Responsive Hamburg Switch Menu Drawer
+    // ----------------------------------------------------
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileDrawer = document.getElementById('mobile-drawer');
+    const closeDrawerBtn = document.getElementById('close-drawer-btn');
+
+    function toggleDrawer() {
+      const isClosed = mobileDrawer.classList.contains('translate-x-full');
+      if (isClosed) {
+        mobileDrawer.classList.remove('translate-x-full');
+      } else {
+        mobileDrawer.classList.add('translate-x-full');
+      }
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleDrawer);
+    if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', toggleDrawer);
+
+    // ----------------------------------------------------
+    // 3. Portfolio Project Filters
+    // ----------------------------------------------------
+    function filterProjects(category) {
+      // Toggle CSS highlights
+      document.querySelectorAll('.project-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-white/5', 'text-white', 'active-filter-btn');
+        btn.classList.add('bg-transparent', 'text-textMuted');
+      });
+
+      const clickedBtn = document.getElementById(`filter-${category}`);
+      if (clickedBtn) {
+        clickedBtn.classList.remove('bg-transparent', 'text-textMuted');
+        clickedBtn.classList.add('bg-white/5', 'text-white', 'active-filter-btn');
+      }
+
+      // Filter displayed components inside block grids
+      const cards = document.querySelectorAll('#projects-container .project-card');
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'flex';
+          setTimeout(() => card.classList.add('visible'), 50);
+        } else {
+          card.style.display = 'none';
+          card.classList.remove('visible');
+        }
+      });
+    }
+
+    // ----------------------------------------------------
+    // 4. Case Studies DB (All 10 Case Studies)
+    // ----------------------------------------------------
+    const caseStudies = {
+      1: {
+        categoryAr: "تقسيم وتجميع البيانات",
+        categoryEn: "CLUSTERING & SEGMENTATION",
+        titleAr: "لوحة RFM تفاعلية لتقسيم العملاء في التجارة الإلكترونية",
+        titleEn: "Interactive E-Commerce RFM Customer Segmentation System",
+        stack: "Python, Streamlit, Scikit-Learn (K-Means), Plotly",
+        typeAr: "التعلم غير الخاضع للإشراف (Unsupervised)",
+        typeEn: "Unsupervised K-Means",
+        metricsAr: "مقياس دقة Silhouette = 0.58",
+        metricsEn: "Silhouette Coefficient = 0.58",
+        problemAr: "تواجه المتاجر الإلكترونية صعوبة في فهم طبيعة العملاء وسلوكهم بسبب زخم تفاصيل الفواتير والمعاملات غير المنظمة، مما يحد من فعالية العروض التسويقية الموجهة.",
+        problemEn: "E-commerce retailers often possess massive transactional datasets but cannot decipher structured behavioral typologies. Raw transactional rows make it impossible to know who is about to churn versus who deserves VIP loyalty perks.",
+        strategyAr: "قمت بهندسة البيانات لتجميع الفواتير وحساب مؤشرات الحداثة (Recency) وتكرار الطلبات (Frequency) والقيمة المالية (Monetary) لكل عميل. طبقت خوارزمية K-Means مع تحديد العدد الأمثل للمجموعات عن طريق اختبار الكوع Elbow Method، مع تصنيف العملاء لمجموعات حية كالأبطال (Champions) والمعرضين للمغادرة (At Risk).",
+        strategyEn: "Aggregated raw invoice entries to compute RFM vectors per client. Removed transaction outliers, normalized feature scales using StandardScaler, and optimized the cluster headcount using Elbow curves & Silhouette analytics. Clustered users into 'VIP Champions', 'Steady Loyalty', 'Sleepers', and 'At Risk'.",
+        outcomeAr: "بناء لوحة تحكم تفاعلية عبر Streamlit لتمكين قطاع التسويق والمبيعات من تصفية المجموعات وتوجيه الخصومات للعملاء المغادرين ورفع مبيعات المتجر عبر برامج الولاء الدقيقة.",
+        outcomeEn: "Constructed an active Streamlit dashboard with dynamic Plotly 3D scatter plots. Empowered marketing teams to run targeted re-engagement campaigns, reducing customer acquisition costs by matching specific marketing offers to specific behavioral groups.",
+        link: "https://www.kaggle.com/code/binaliy/walmart-recruiting-store-sales-forecasting1"
+      },
+      2: {
+        categoryAr: "التعلم الآلي والنمذجة",
+        categoryEn: "PREDICTION & MACHINE LEARNING",
+        titleAr: "نظام متكامل للتنبؤ وتقدير القيمة السكنية للعقارات",
+        titleEn: "End-to-End Real Estate Valuation Pipeline",
+        stack: "XGBoost, Scikit-Learn, Pandas, GridSearchCV",
+        typeAr: "التعلم الخاضع للإشراف - الانحدار (Regression)",
+        typeEn: "Supervised Regression",
+        metricsAr: "نسبة تفسير النموذج R² = 0.89",
+        metricsEn: "Model Fit R² = 0.89",
+        problemAr: "يتأثر قطاع العقارات السكنية بالتذبذبات الاقتصادية، مما يجعل تحديد السعر العادل للمنازل يدوياً أمراً صعباً وعرضة للأخطاء الفردية والتقييمات غير العادلة.",
+        problemEn: "Home price estimation is volatile and prone to manual biases. Extreme property features (like impossibly structured room configurations or massive single outlier mansions) skew linear valuations.",
+        strategyAr: "قمنا بفحص المعطيات مثل الدخل السنوي للحي، وموقع المنزل، وأعمار المباني. تم إزالة القيم المتطرفة الشاذة، وهندسة الميزات (Feature Engineering) للربط بين الكثافة السكانية ومستوى الرفاهية بالحي، مع تجربة وتصفية عدة نماذج باستخدام GridSearchCV واستقرار القرار عند استخدام XGBoost.",
+        strategyEn: "Scanned structural features (income matrices, room capacity, geographical centroids). Implemented outlier cleaning, engineered high-value metrics (ratio of bedrooms-to-total rooms), compared multiple regressors, and fine-tuned XGBoost using cross-validated GridSearchCV parameters.",
+        outcomeAr: "أثبت النموذج تفوقاً في رصد محركات الأسعار الأساسية، مؤكداً أن مستوى الدخل السنوي للحي الجغرافي وقرب المنزل من مراكز العمل يمثلان أهم مؤشرات تسعير العقار.",
+        outcomeEn: "Constructed an expert estimator proving geographical localized household income is the leading factor of real estate value. Yielded low Mean Absolute Error (MAE) benchmarks perfect for prop-tech validation tools.",
+        link: "#"
+      },
+      3: {
+        categoryAr: "التعلم الآلي والنمذجة",
+        categoryEn: "CLASSIFICATION",
+        titleAr: "كشف الاحتيال للبطاقات الائتمانية مع موازنة البيانات",
+        titleEn: "Anomalous Credit Card Fraud Detection Guard",
+        stack: "Random Forest, SMOTE, Scikit-Learn, Imbalanced-Learn",
+        typeAr: "التعلم الخاضع للإشراف - تصنيف (Classification)",
+        typeEn: "Imbalanced Classification",
+        metricsAr: "معدل دقة الاستدعاء Recall = 94% | ROC-AUC = 0.97",
+        metricsEn: "High Recall Sensitivity = 94% | ROC-AUC = 0.97",
+        problemAr: "تعد العمليات الاحتيالية نادرة جداً (أقل من 0.2%) مما يجعل النماذج البرمجية القياسية تعاني من وهم الدقة عبر توقع أن كافة العمليات سليمة دائماً وبالتالي يفشل في كشف السارق.",
+        problemEn: "In credit card fraud data, malicious incidents are extremely rare (less than 0.2% of transactions). Standard machine learning algorithms will confidently guess 'safe' for everything, failing completely to catch the thief.",
+        strategyAr: "تم التعامل مع هذه المشكلة عن طريق توليد عينات اصطناعية للعمليات النادرة باستخدام تقنيات SMOTE (Synthetic Minority Over-sampling). وتم تصفية البيانات واستخدمنا نموذج الغابات العشوائية Random Forest لرفع قدرة الكشف وتدريبه على رصد الاحتيال.",
+        strategyEn: "Overcame the massive imbalance by manufacturing synthetic fraud vectors via SMOTE. Fine-tuned custom class weights and adjusted probability thresholds to prioritize finding malicious transactions while keeping false alerts extremely low.",
+        outcomeAr: "تطوير درع حماية متكامل يبدي حساسية دقيقة جداً تجاه الحالات الاحتيالية النادرة، مما يسمح للبنوك بحماية أموال العملاء والحد من الخسائر المالية الناجمة عن الاحتيال.",
+        outcomeEn: "Constructed an elite risk evaluation firewall that minimizes hazardous false negatives. Yielded high ROC-AUC scores, allowing financial institutions to block cyber threats dynamically.",
+        link: "#"
+      },
+      4: {
+        categoryAr: "التعلم الآلي والنمذجة",
+        categoryEn: "HEALTHCARE AI",
+        titleAr: "التنبؤ الإكلينيكي وتقييم مخاطر السكري للمرضى",
+        titleEn: "Diagnostic Clinical Risk Diabetes System",
+        stack: "Logistic Regression, Random Forest, Seaborn",
+        typeAr: "تصنيف الرعاية الصحية (Classification)",
+        typeEn: "Healthcare Classification",
+        metricsAr: "معدل الحساسية للتوقع (Recall) = 91%",
+        metricsEn: "Diagnostic Recall Sensitivity = 91%",
+        problemAr: "تحتوي السجلات الطبية غالباً على قيم فارغة مكتوبة كأصفار (0 لضغط الدم، 0 لنسبة الدهون) مما يضلل النماذج الطبية ويهدد سلامة التشخيص.",
+        problemEn: "Medical databases often hide null entries as zeros (such as registering 0 for a patient's Blood Pressure or BMI). These false zeros lead to flawed, risky, and incorrect diagnostic alerts.",
+        strategyAr: "قمت بمعالجة القيم الخاطئة باستبدالها بمتوسط القيم للمجموعات المشابهة من نفس الفئة العمرية. ركزت الدراسة على رفع مؤشر الاستدعاء (Recall) بدلاً من الدقة العامة لتقليل الحالات المريضة التي يتجاهلها النظام.",
+        strategyEn: "Identified zero anomalies in clinical metrics. Imputed the values dynamically using subgroup means based on patient age and BMI cohorts. Evaluated Logistic Regression against Random Forests, emphasizing high Recall models to avoid missed diagnoses.",
+        outcomeAr: "إنشاء نموذج ذكي ومحتاط لتقدير مخاطر السكري يستهدف سلامة المرضى عبر ضمان رصد وتنبيه الحالات المصابة الحقيقية دون إغفالها.",
+        outcomeEn: "Built a diagnostic engine tailored for clinical safety, ensuring high detection rates of early-stage diabetes risks. Successfully isolated blood glucose warnings as the strongest predictor.",
+        link: "#"
+      },
+      5: {
+        categoryAr: "التنبؤ بالسلاسل الزمنية",
+        categoryEn: "TIME SERIES FORECASTING",
+        titleAr: "التنبؤ المستقبلي بأعداد المسافرين لخطوط الطيران",
+        titleEn: "Flight Passenger Volume Forecasting Engine",
+        stack: "Facebook Prophet, Time-Series Cross-Validation, Pandas",
+        typeAr: "التنبؤ بالسلاسل الزمنية (Forecasting)",
+        typeEn: "Univariate Time-Series Forecasting",
+        metricsAr: "دقة التنبؤ R² = 0.936 | MAPE = 5.2%",
+        metricsEn: "Validation R² = 0.936 | MAPE = 5.2%",
+        problemAr: "يتأثر تخطيط وجدولة شركات الطيران بالتقلبات والزيادات الكبيرة للركاب في الإجازات ومواسم السفر السنوية، مما يسبب خسائر في حال سوء تقدير العرض والطلب.",
+        problemEn: "Airlines struggle to optimize schedules and staffing because travel demand fluctuates wildly. Simple algorithms fail to balance long-term business growth with intense seasonal spikes.",
+        strategyAr: "استخدمت خوارزمية Prophet من فيسبوك لتحليل نمط السفر والنمو التاريخي. قمت بضبط الموسمية التضاعفية (Multiplicative Seasonality) لتلائم التغيير وتحديد تأثير فترات العطلات ومقارنتها عبر تقنية التحقق المتبادل للزمن.",
+        strategyEn: "Reconstructed sequential timeline records. Deployed Facebook Prophet with multiplicative seasonality parameters to capture compound yearly holiday spikes. Validated predictions using diagnostic time-slices.",
+        outcomeAr: "تقديم خريطة توقعات دقيقة تمكن الشركات من جدولة الطائرات وتحديد أسعار المقاعد بكفاءة تامة بناءً على توقع تدفق المسافرين.",
+        outcomeEn: "Generated a precise forecasting ledger mapping potential passenger traffic months in advance, allowing airlines to adjust crew schedules and seat pricing strategically.",
+        link: "#"
+      },
+      6: {
+        categoryAr: "التنبؤ بالسلاسل الزمنية",
+        categoryEn: "RETAIL SALES FORECASTING",
+        titleAr: "التنبؤ بالمبيعات الأسبوعية لسلسلة متاجر وول مارت",
+        titleEn: "Large-Scale Retail Demand Forecaster",
+        stack: "XGBoost, Scikit-Learn, Pandas, WMAE Optimization",
+        typeAr: "السلاسل الزمنية مع المتغيرات المساعدة (Multivariate)",
+        typeEn: "Multivariate Time-Series Forecasting",
+        metricsAr: "نسبة التفسير R² = 0.943",
+        metricsEn: "Test Score R² = 0.943",
+        problemAr: "تمتلك المتاجر الضخمة مئات الأقسام مع تقلب مبيعاتها بشكل حاد في عطلة الجمعة البيضاء وأعياد رأس السنة مما يعقد مهمة تنظيم المخزون والخدمات.",
+        problemEn: "Massive retail chains experience extreme sales surges during holiday events (like Black Friday and Christmas). Underestimating this demand causes lost revenue, while overestimating wastes inventory.",
+        strategyAr: "دمجت بيانات مبيعات الأقسام مع متغيرات الطقس، وأسعار الوقود، ونسبة البطالة المحلية. طبقت نموذج XGBoost مع تحسين دالة الخسارة المخصصة WMAE التي تمنح أوزاناً إضافية لأوقات العطلات لضمان رصد الذروة بدقة.",
+        strategyEn: "Merged weekly revenue metrics across 45 stores and 99 departments with economic indices (unemployment rates, local fuel prices, temperatures). Modeled with XGBoost, utilizing a custom Weighted Mean Absolute Error (WMAE) loss function.",
+        outcomeAr: "تحقيق دقة فائقة في توقع حجم مبيعات المواسم الاستثنائية، مما يسمح بتقليل تكاليف تخزين الفائض ومواكبة الطلب الضخم بشكل مثالي.",
+        outcomeEn: "Constructed a seasonal sales forecaster. Enabled store managers to forecast departmental demand, ensuring correct inventory levels during the year's busiest shopping cycles.",
+        link: "https://www.kaggle.com/code/binaliy/walmart-recruiting-store-sales-forecasting1"
+      },
+      7: {
+        categoryAr: "التنبؤ بالسلاسل الزمنية",
+        categoryEn: "TIME SERIES ANALYSIS",
+        titleAr: "تتبع أحمال شبكة الكهرباء وتحليل أنماط الاستهلاك",
+        titleEn: "Grid Power Consumption Analytics System",
+        stack: "Python, Pandas, Matplotlib, Seaborn",
+        typeAr: "تحليل وتوقع الاستهلاك (Energy Analytics)",
+        typeEn: "Time-Series Consumption Analytics",
+        metricsAr: "تحديد دقيق لـ 3 أنماط أساسية للاستهلاك",
+        metricsEn: "Isolated 3 Distinct Seasonal Power Demands",
+        problemAr: "يتسبب التغيير المستمر واللحظي لاستهلاك الطاقة الكهربائية في تعريض شبكات التوزيع للضغط المفاجئ أو الهدر المالي إذا لم تفهم أنماط الاستهلاك اليومية بدقة.",
+        problemEn: "Electrical utility providers suffer severe grid overloads if they cannot anticipate peak times. Understanding daily and weekly baseline usage shifts is critical to managing energy distributions.",
+        strategyAr: "قمت بتنظيف ومعالجة سجلات استخدام الطاقة الكهربائية لكل ساعة. صممت مخططات ورسوماً بيانية توضيحية لتحديد التباين بين فترات العمل الصباحية وفترات الاستخدام المنزلي المسائية، مع تتبع الفروقات بين الصيف والشتاء.",
+        strategyEn: "Processed chronological energy consumption databases on an hourly index. Engineered datetime features (hour-of-day, day-of-week, month) and created detailed trend plots to isolate peak daily and seasonal load intervals.",
+        outcomeAr: "استخراج تقرير تحليلي يوضح فترات الذروة وأوقات التوازن، مما يدعم مشغلي الشبكة في توزيع الجهد ومنع حالات الانقطاع المفاجئ للطاقة.",
+        outcomeEn: "Delivered a structured load analysis displaying clear daily peaks and summer demand spikes, enabling energy operators to allocate power output and prevent unexpected blackouts.",
+        link: "#"
+      },
+      8: {
+        categoryAr: "تقسيم وتصنيف البيانات",
+        categoryEn: "CLUSTERING",
+        titleAr: "تصنيف عملاء المراكز التجارية لتوجيه الحملات الإعلانية",
+        titleEn: "Mall Shopper Behavior Segmentation Model",
+        stack: "Scikit-Learn (K-Means), Matplotlib, Seaborn",
+        typeAr: "التعلم غير الخاضع للإشراف (Clustering)",
+        typeEn: "Unsupervised Clustering",
+        metricsAr: "أكثر من 5 مجموعات تصنيفية واضحة ومستقلة",
+        metricsEn: "Identified 5 Distinct Buying Personas",
+        problemAr: "يؤدي التسويق الجماعي والعشوائي لزوار المولات التجارية إلى هدر ميزانيات الحملات الإعلانية دون تحقيق استجابة لعدم التمييز بين ذوي الدخل المرتفع ومحبي التوفير.",
+        problemEn: "Broad, generic advertising in retail hubs wastes advertising budgets. Without segmenting customers by their income and willingness to spend, promotions feel irrelevant to shoppers.",
+        strategyAr: "طبقت خوارزمية K-Means لتقسيم المتسوقين بناءً على الدخل السنوي ومؤشرات تقييم الإنفاق الخاصة بكل متسوق. تم تصفية عدد المجموعات لتكون واضحة وجذابة للتسويق واستخدمنا رسوماً بيانية ثنائية المحور لمقارنتهم.",
+        strategyEn: "Applied K-Means clustering on customer profiles tracking yearly income metrics and spending scores. Pinpointed the ideal cluster count using Elbow plots, validating clear margins between each consumer segment.",
+        outcomeAr: "رصد النموذج فئات رئيسية واضحة كأثرياء لا ينفقون (Untapped High-Earners) والعملاء المعتدلين، مما يتيح للإدارة توجيه عروض مناسبة لجيب واهتمام كل عميل.",
+        outcomeEn: "Isolated high-value groups like 'Affluent and Conservative' versus 'High Spend Trendsetters'. Enabled shopping mall administrators to target specific retail campaigns to those most likely to convert.",
+        link: "#"
+      },
+      9: {
+        categoryAr: "تقسيم وتصنيف البيانات",
+        categoryEn: "FINTECH CLUSTERING",
+        titleAr: "تحليل وتجميع سلوك حاملي بطاقات الائتمان (PCA)",
+        titleEn: "Credit Card Behavioral Profiling Pipeline",
+        stack: "Scikit-Learn (PCA & K-Means), StandardScaler, Seaborn",
+        typeAr: "تقليص الأبعاد والتقسيم (Dimensionality Reduction)",
+        typeEn: "Dimensionality Reduction & Clustering",
+        metricsAr: "تقليل المتغيرات لـ 3 أبعاد رئيسية مع الحفاظ على 82% من التباين",
+        metricsEn: "Preserved 82% Variance Across 3 PCA Components",
+        problemAr: "يصعب على البنوك تحليل سلوك حاملي البطاقات نظراً لكثرة الأعمدة والبيانات المتداخلة كأحجام السحب النقدي، مبالغ الأقساط والالتزام بالسداد (معضلة الأبعاد المتعددة).",
+        problemEn: "Analyzing credit card customers is difficult because there are too many overlapping metrics (balances, cash advances, payments). High dimensionality makes standard grouping algorithms slow and inaccurate.",
+        strategyAr: "قمت أولاً بمعالجة البيانات وتوحيد مقاييسها. استخدمت تحليل المكونات الرئيسية (PCA) لضغط أكثر من 17 متغيراً مالياً معقداً إلى 3 محاور فقط، ثم طبقت خوارزمية K-Means لتصنيف حاملي البطاقات تلو الآخر.",
+        strategyEn: "Standardized highly skewed transaction data. Used Principal Component Analysis (PCA) to compress 17 raw features into 3 core components. Then, applied K-Means on this compressed space to construct clear profile boundaries.",
+        outcomeAr: "تقسيم مستخدمي البطاقات الائتمانية إلى أنماط واضحة كالمعتمدين على السحب الكاش لتمكين البنك من صياغة منتجات تمويلية دقيقة تناسب سلوكهم الحقيقي.",
+        outcomeEn: "Discovered 4 actionable user archetypes, such as 'Active Installment Shoppers' and 'Cash Advance Reliant'. Enabled credit card issuers to craft personalized credit limits and reward programs.",
+        link: "#"
+      },
+      10: {
+        categoryAr: "معالجة اللغة الطبيعية",
+        categoryEn: "NATURAL LANGUAGE PROCESSING",
+        titleAr: "مصنف ومحلل مشاعر تقييمات الأفلام السينمائية",
+        titleEn: "Text-Analysis Movie Review Sentiment Classifier",
+        stack: "NLTK, TF-IDF Vectorizer, Logistic Regression",
+        typeAr: "تصنيف نصوص البرمجة اللغوية العصبية (NLP)",
+        typeEn: "NLP Classification",
+        metricsAr: "معدل الدقة الإجمالية (Accuracy) = 89.2%",
+        metricsEn: "Model Accuracy Score = 89.2%",
+        problemAr: "تحتوي تعليقات وآراء الجمهور على منصات الإنترنت على نصوص مبعثرة ورموز غريبة وتنسيقات HTML عشوائية، مما يحول دون استخلاص رضا المشاهدين آلياً.",
+        problemEn: "Online consumer reviews are full of messy internet slang, HTML markup, and irrelevant punctuation. Manually reading thousands of comments to gauge audience feedback is impossible for streaming and production studios.",
+        strategyAr: "قمت ببرمجة نظام لتنظيف النصوص: مسح وسوم HTML والروابط، وتجريد الكلمات من اللواحق (Stemming/Lemmatization). قمت بتحويل النصوص إلى أرقام ومعادلات باستخدام TF-IDF لوزن العبارات، ثم دربت مصنفاً لتمييز الإيجاب والرفض.",
+        strategyEn: "Engineered a custom NLP pipeline: stripped HTML elements, eliminated punctuation, and removed stop-words. Transformed texts into numerical arrays using TF-IDF (N-grams). Then trained a high-precision Classifier to output positive/negative sentiment.",
+        outcomeAr: "أصبح بمقدور الاستوديوهات والشركات المنتجة تتبع ردود أفعال الجماهير تلقائياً فور طرح الأفلام في دور السينما لمعرفة اتجاه الرأي العام بدقة وبسرعة قياسية.",
+        outcomeEn: "Delivered a high-speed NLP classifier capable of processing thousands of raw internet comments instantly, providing production houses with direct sentiment metrics on recent releases.",
+        link: "#"
+      }
+    };
+
+    function openModal(id) {
+      const study = caseStudies[id];
+      if (!study) return;
+
+      const isAr = document.documentElement.lang === 'ar';
+
+      // Inject content elements
+      document.getElementById('modal-category-badge').textContent = isAr ? study.categoryAr : study.categoryEn;
+      document.getElementById('modal-title').textContent = isAr ? study.titleAr : study.titleEn;
+      document.getElementById('modal-stack').textContent = study.stack;
+      document.getElementById('modal-type').textContent = isAr ? study.typeAr : study.typeEn;
+      document.getElementById('modal-metrics').textContent = isAr ? study.metricsAr : study.metricsEn;
+      document.getElementById('modal-problem').textContent = isAr ? study.problemAr : study.problemEn;
+      document.getElementById('modal-strategy').textContent = isAr ? study.strategyAr : study.strategyEn;
+      document.getElementById('modal-outcome').textContent = isAr ? study.outcomeAr : study.outcomeEn;
+      
+      const linkBtn = document.getElementById('modal-external-link');
+      if (study.link && study.link !== "#") {
+        linkBtn.href = study.link;
+        linkBtn.style.display = 'inline-flex';
+      } else {
+        linkBtn.style.display = 'none';
+      }
+
+      // Display Modal Layout Container
+      const modal = document.getElementById('project-modal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Stop background scrolling
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('project-modal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = 'auto'; // Re-enable background scrolling
+    }
+
+    // Modal click out boundary escape
+    document.getElementById('project-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // ----------------------------------------------------
+    // 5. Initial State Load Setup
+    // ----------------------------------------------------
+    window.addEventListener('load', () => {
+      // Restore Language Preferences
+      const savedLang = localStorage.getItem('yasser-pref-lang') || 'ar';
+      setLanguage(savedLang);
+
+      // Trigger standard scroll behaviour on load
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'auto';
+      }
+
+      // Load Entry Visual Animations
+      setTimeout(() => {
+        document.querySelectorAll('.fade-up').forEach((el, index) => {
+          setTimeout(() => {
+            el.classList.add('visible');
+          }, index * 80);
+        });
+      }, 150);
+    });
+
+    // Intersection observer API triggering entries on scroll down
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.05 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
